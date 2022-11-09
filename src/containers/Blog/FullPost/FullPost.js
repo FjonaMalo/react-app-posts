@@ -1,20 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
+import { withRouter } from "react-router-dom";
 import axios from "axios";
-import { useParams } from "react-router-dom";
 
 import "./FullPost.css";
-
-export function withRouter(Children) {
-  return (props) => {
-    const match = { params: useParams() };
-    return <Children {...props} match={match} />;
-  };
-}
-// const withRouter = (WrappedComponent) => (props) => {
-//   const params = useParams();
-
-//   return <WrappedComponent {...props} params={params} />;
-// };
 
 class FullPost extends React.Component {
   state = {
@@ -23,11 +11,19 @@ class FullPost extends React.Component {
 
   componentDidMount() {
     console.log(this.props);
+    this.loadData();
+  }
 
+  componentDidUpdate() {
+    this.loadData();
+  }
+
+  loadData() {
     if (this.props.match.params.id) {
       if (
         !this.state.loadedPost ||
-        (this.state.loadedPost && this.state.loadedPost.id !== this.props.id)
+        (this.state.loadedPost &&
+          this.state.loadedPost.id !== +this.props.match.params.id)
       ) {
         axios.get("/posts/" + this.props.match.params.id).then((response) => {
           // console.log(response);
@@ -38,14 +34,14 @@ class FullPost extends React.Component {
   }
 
   deletePostHandler = () => {
-    axios.delete("/posts/" + this.props.id).then((response) => {
+    axios.delete("/posts/" + this.props.match.params.id).then((response) => {
       console.log(response);
     });
   };
 
   render() {
     let post = <p style={{ textAlign: "center" }}>Please select a Post!</p>;
-    if (this.props.id) {
+    if (this.props.match.params.id) {
       post = <p style={{ textAlign: "center" }}>Loading...</p>;
     }
 

@@ -10,5 +10,4 @@ const post = (props) => (
     </div>
   </article>
 );
-
 export default post;
